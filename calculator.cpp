@@ -1,16 +1,132 @@
 #include <windows.h>
+#include <stdio.h>
 
-/* This is where all the input to the window goes to */
+HWND textfield , btn_add , btn_sub , btn_mul , btn_div ;
+HWND textInput1 , textInput2 ;
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
 	switch(Message) {
 		
-		/* Upon destruction, tell the main thread to stop */
+
+		case WM_CREATE:
+			
+			textfield = CreateWindow("STATIC", "Please input two numbers", 
+				WS_VISIBLE | WS_CHILD | SS_CENTER , 
+				20, 20, 200, 25, 
+				hwnd, NULL, NULL, NULL);
+			
+			btn_add = CreateWindow("BUTTON", "+", 
+				WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER , 
+				60, 120, 25, 25, 
+				hwnd, (HMENU) 1 , NULL, NULL);
+
+			btn_sub = CreateWindow("BUTTON", "-", 
+				WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER , 
+				90, 120, 25, 25, 
+				hwnd, (HMENU) 2 , NULL, NULL);
+
+			btn_mul = CreateWindow("BUTTON", "*", 
+				WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER , 
+				120, 120, 25, 25, 
+				hwnd, (HMENU) 3 , NULL, NULL);
+
+			btn_div = CreateWindow("BUTTON", "/", 
+				WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER , 
+				150, 120, 25, 25, 
+				hwnd, (HMENU) 4 , NULL, NULL);
+			
+			textInput1 = CreateWindow("EDIT", "",
+				WS_VISIBLE | WS_CHILD | SS_CENTER , 
+				40, 50, 160, 25, 
+				hwnd, NULL, NULL, NULL);
+
+			textInput2 = CreateWindow("EDIT", "",
+				WS_VISIBLE | WS_CHILD | SS_CENTER , 
+				40, 80, 160, 25, 
+				hwnd, NULL, NULL, NULL);
+
+			break;
+
+		case WM_COMMAND:
+				
+				char text1[100] , text2[100] , result_text[100]; ;
+				double result, num1 , num2;
+
+				switch(LOWORD(wParam))
+				{
+					case 1:
+
+						GetWindowText(textInput1 , &text1[0] , 100);
+						GetWindowText(textInput2 , &text2[0] , 100);
+
+						num1 = atof(text1);
+						num2 = atof(text2);
+
+						result = num1 + num2;
+
+						sprintf(result_text, "%f", result);
+
+						::MessageBeep(MB_ICONERROR);
+						::MessageBox(hwnd , result_text , "Result" , MB_OK);
+						break;
+
+					case 2:
+
+						GetWindowText(textInput1 , &text1[0] , 100);
+						GetWindowText(textInput2 , &text2[0] , 100);
+
+						num1 = atof(text1);
+						num2 = atof(text2);
+
+						result = num1 - num2;
+
+						sprintf(result_text, "%f", result);
+
+						::MessageBeep(MB_ICONERROR);
+						::MessageBox(hwnd , result_text , "Result" , MB_OK);
+						break;
+
+					case 3:
+
+						GetWindowText(textInput1 , &text1[0] , 100);
+						GetWindowText(textInput2 , &text2[0] , 100);
+
+						num1 = atof(text1);
+						num2 = atof(text2);
+
+						result = num1 * num2;
+
+						sprintf(result_text, "%f", result);
+						
+						::MessageBeep(MB_ICONERROR);
+						::MessageBox(hwnd , result_text , "Result" , MB_OK);
+						break;
+
+					case 4:
+
+						GetWindowText(textInput1 , &text1[0] , 100);
+						GetWindowText(textInput2 , &text2[0] , 100);
+
+						num1 = atof(text1);
+						num2 = atof(text2);
+
+						result = num1 / num2;
+
+						sprintf(result_text, "%f", result);
+
+						::MessageBeep(MB_ICONERROR);
+						::MessageBox(hwnd , result_text , "Result" , MB_OK);
+						break;
+				}
+
+				break;
+		
+	
 		case WM_DESTROY: {
 			PostQuitMessage(0);
 			break;
 		}
 		
-		/* All other messages (a lot of them) are processed using default procedures */
 		default:
 			return DefWindowProc(hwnd, Message, wParam, lParam);
 	}
@@ -31,7 +147,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.hCursor	 = LoadCursor(NULL, IDC_ARROW);
 	
 	/* White, COLOR_WINDOW is just a #define for a system color, try Ctrl+Clicking it */
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+	wc.hbrBackground = (HBRUSH)(COLOR_INFOBK + 1);
+	//wc.hbrBackground = CreateSolidBrush(RGB(255, 165, 0));
 	wc.lpszClassName = "WindowClass";
 	wc.hIcon	 = LoadIcon(NULL, IDI_APPLICATION); /* Load a standard icon */
 	wc.hIconSm	 = LoadIcon(NULL, IDI_APPLICATION); /* use the name "A" to use the project icon */
@@ -41,11 +158,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE,"WindowClass","Caption",WS_VISIBLE|WS_OVERLAPPEDWINDOW,
+	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE,"WindowClass","My Calculator",WS_VISIBLE|WS_SYSMENU,
 		CW_USEDEFAULT, /* x */
 		CW_USEDEFAULT, /* y */
-		640, /* width */
-		480, /* height */
+		250, /* width */
+		200, /* height */
 		NULL,NULL,hInstance,NULL);
 
 	if(hwnd == NULL) {
